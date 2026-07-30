@@ -16,6 +16,10 @@ It is kind of vague whether declaring movement, p.163, means only the route or a
 Current SR5 system considers and flags character running only after they have moved beyond their walking rate. This means that with 2 phases they can first walk and then run, but not the other way. This also complies with p.162 "As soon as.." and p.161 "...before they are considered to be Running". However, if that limits players' option too much, this module offers options.
 
 ## SETTINGS:
+
+!!! "Auto Detect Running Movement" in SR5 settings must be turned off !!!
+---------------------------------------------------------------------------
+
 - Movement mode is declared in combat tracker either (A) once for the whole turn or (B) once every phase.
 A is a strict interpretation of p.163 "Movement is declared and taken into consideration during the declare actions phase".
 B offers more flexibility and allows a character to act without running penalty in 1st phase and move up to max walking distance and the run in 2nd phase.

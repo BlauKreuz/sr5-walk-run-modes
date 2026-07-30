@@ -1,0 +1,102 @@
+/* ── SR5 Walk/Run Mode – Encounter Tracker toggle ───────────────────────────── */
+
+/* Outer wrapper: two rows stacked */
+.sr5-movement-toggle {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  margin-left: 4px;
+  vertical-align: middle;
+}
+
+/* Row 1 – distance readout ("5.0 / 20m") */
+.sr5-movement-info {
+  font-size: 0.8rem;
+  opacity: 0.8;
+}
+
+/* Row 2 – walk icon, toggle button, run icon on one line */
+.sr5-mode-row {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  gap: 4px;
+  white-space: nowrap;
+  flex-wrap: nowrap;
+}
+
+/* Walk / Run FA icons flanking the toggle button */
+.sr5-mode-icon {
+  font-size: 0.9rem;
+  pointer-events: none;
+  opacity: 0.5;
+}
+
+/* Toggle button – no chrome, just the SVG image */
+.sr5-movement-toggle .sr5-mode-btn {
+  background: none !important;
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  cursor: pointer;
+  line-height: 0;
+  vertical-align: middle;
+  flex-shrink: 0;
+  width: auto !important;
+  height: auto !important;
+}
+
+.sr5-movement-toggle .sr5-mode-btn:hover {
+  filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.6)) brightness(1.2);
+}
+
+.sr5-movement-toggle .sr5-mode-btn:disabled {
+  opacity: 0.9;
+  cursor: default;
+  filter: none;
+}
+
+/* SVG state image inside the button */
+.sr5-movement-toggle .sr5-mode-img {
+  height: 18px !important;
+  width: auto !important;
+  max-width: none !important;
+  display: block !important;
+  pointer-events: none;
+}
+
+/* Sprint button – identical chrome reset to .sr5-mode-btn */
+.sr5-movement-toggle .sr5-sprint-btn {
+  background: none !important;
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  cursor: pointer;
+  line-height: 0;
+  vertical-align: middle;
+  flex-shrink: 0;
+  width: auto !important;
+  height: auto !important;
+}
+
+.sr5-movement-toggle .sr5-sprint-btn img {
+  height: 18px !important;
+  width: auto !important;
+  max-width: none !important;
+  display: block !important;
+  pointer-events: none;
+}
+
+.sr5-movement-toggle .sr5-sprint-btn:hover {
+  filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.6)) brightness(1.2);
+}
+
+.sr5-movement-toggle .sr5-sprint-btn:disabled {
+  opacity: 0.9;
+  cursor: default;
+  filter: none;
+}

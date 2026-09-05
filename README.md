@@ -20,11 +20,10 @@ Current SR5 system considers and flags character running only after they have mo
 A is a strict interpretation of p.163 "Movement is declared and taken into consideration during the declare actions phase".
 B offers more flexibility and allows a character to act without running penalty in 1st phase and move up to max walking distance and the run in 2nd phase.
 
-- Clicked running mode can be set to create appropriate active effects automatically, but this requires an additional module (sr5-ae-neg-filter).
-
- -- Penalty -2 (running) to all active tests, other than the running test for sprinting distance increase. Sprinting does not cause additional penalties.
-
- -- Bonus +2 (running) or +4 (sprinting) to physical defense tests.
+- Declared running mode creates appropriate active effects automatically.
+  -- Penalty -2 (running) to all active tests, other than the running test for sprinting distance increase. Sprinting does not cause additional penalties.
+  -- Bonus +2 (running) or +4 (sprinting) to physical defense tests.
+  -- Bonus +4 to unarmed attack due to charging.
 
  This setting also disabled SR5 setting "Auto-Detect Running Mode", since modes are declared by players.
 

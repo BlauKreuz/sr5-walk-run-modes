@@ -66,6 +66,8 @@ export function registerSettings() {
     type: Boolean,
     default: false,
   });
+
+
 }
 
 /** Returns the declaration mode: "once_per_round" | "per_phase". */

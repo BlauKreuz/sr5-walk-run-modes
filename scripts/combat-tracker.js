@@ -24,11 +24,19 @@ import {
   shouldOpenRunningTestOnSprint,
 } from "./settings.js";
 
+// Font Awesome classes for the SR5 physical/meatspace initiative icon.
+// Change this value when the final icon has been chosen.
+const PHYSICAL_INITIATIVE_ICON = "fa-solid fa-person-arms-raised";
+const ASTRAL_INITIATIVE_ICON = "fa-regular fa-crystal-ball";
+const MATRIX_INITIATIVE_ICON = "fa-regular fa-network-wired";
+
 export function registerCombatTrackerHooks() {
   // V13 uses ApplicationV2-based combat tracker
   Hooks.on("renderCombatTrackerV2", onRenderCombatTracker);
   // Fallback for older builds that still use the V1 tracker - possibly SR5
   Hooks.on("renderCombatTracker", onRenderCombatTracker);
+  // Replace initiative-mode icons in SR5 initiative chat cards as well.
+  Hooks.on("renderChatMessageHTML", onRenderInitiativeChatCard);
 
   // Update only the distance number when a token move is committed,
   // without triggering a full tracker re-render.
@@ -47,11 +55,13 @@ function onRenderCombatTracker(app, html) {
   const combat = game.combat;
   if (!combat) return;
 
+  const root = html instanceof HTMLElement ? html : html?.[0];
+  if (!root) return;
+  replaceInitiativeModeIcons(root);
+
   for (const combatant of combat.combatants) {
     if (!combatant.name || combatant.name === "Unknown Combatant") return;
 
-    // Support both ApplicationV2 (HTMLElement) and V1 (jQuery) render targets
-    const root = html instanceof HTMLElement ? html : html[0];
     const li = root.querySelector(`[data-combatant-id="${combatant.id}"]`);
     if (!li) continue;
 
@@ -164,6 +174,81 @@ function onRenderCombatTracker(app, html) {
       const initiativeEl = li.querySelector(".token-initiative");
       if (initiativeEl) initiativeEl.before(placeholder);
       else li.appendChild(placeholder);
+    }
+  }
+}
+
+/**
+ * Replace initiative-mode icons in SR5 initiative summary and mode-change cards.
+ *
+ * @param {ChatMessage} message
+ * @param {HTMLElement} html
+ */
+function onRenderInitiativeChatCard(message, html) {
+  const root = html instanceof HTMLElement ? html : html?.[0];
+  if (!root || !root.querySelector(".initiative-summary-card")) return;
+  replaceInitiativeModeIcons(root);
+}
+
+/**
+ * Replace initiative-mode icons owned by this module.
+ * Menu options are targeted by data-mode so unrelated icons are untouched.
+ *
+ * @param {HTMLElement} root
+ */
+function replaceInitiativeModeIcons(root) {
+  const replacements = [
+    {
+      icon: PHYSICAL_INITIATIVE_ICON,
+      selectors: [
+        ".combatant-init-mode-icon.mode-physical i",
+        '.combatant-mode-menu .combatant-mode-option[data-mode="meatspace"] i',
+        ".initiative-summary-card .initiative-mode-icon.mode-physical i",
+      ],
+    },
+    {
+      icon: ASTRAL_INITIATIVE_ICON,
+      selectors: [
+        ".combatant-init-mode-icon.mode-astral i",
+        '.combatant-mode-menu .combatant-mode-option[data-mode="astral"] i',
+        ".initiative-summary-card .initiative-mode-icon.mode-astral i",
+      ],
+    },
+    {
+      icon: MATRIX_INITIATIVE_ICON,
+      selectors: [
+        ".combatant-init-mode-icon.mode-matrix i",
+        '.combatant-mode-menu .combatant-mode-option[data-mode="matrix"] i',
+        '.combatant-mode-menu .combatant-mode-option[data-mode="cold_sim"] i',
+        '.combatant-mode-menu .combatant-mode-option[data-mode="hot_sim"] i',
+        ".initiative-summary-card .initiative-mode-icon.mode-matrix i",
+      ],
+    },
+  ];
+
+  for (const replacement of replacements) {
+    const iconClass = replacement.icon.split(" ");
+    for (const icon of root.querySelectorAll(replacement.selectors.join(", "))) {
+      icon.classList.remove(
+      "fa-star",
+      "fa-laptop-code",
+      "fa-crystal-ball",
+      "fa-network-wired",
+      "fa-solid",
+      "fa-regular",
+      "fa-light",
+      "fa-thin",
+      "fa-duotone",
+      "fa-sharp",
+      "fa-sharp-solid",
+      "fa-sharp-regular",
+      "fa-sharp-light",
+      "fa-sharp-thin",
+      "fa-person-running",
+      "fa-person-running-fast",
+      "fa-person-walking",
+      );
+      icon.classList.add(...iconClass);
     }
   }
 }
@@ -400,7 +485,7 @@ async function updateMovementEffect(combatant) {
   }
 
   const moduleFlagKey = "sr5walkrun";
-  const effectIds = ["globalPenalty", "defenseBonus"]; //, "runningComp"];
+  const effectIds = ["globalPenalty", "defenseBonus", "chargingBonus"]; //, "runningComp"];
   
   // Etsitään olemassa olevat efektit
   const existingEffects = actor.effects.filter(e => effectIds.includes(e.flags?.[moduleFlagKey]?.id));
@@ -429,6 +514,7 @@ async function updateMovementEffect(combatant) {
   const testsToExclude = [
     'PhysicalDefenseTest',
     'CombatSpellDefenseTest',
+    'SuppressionDefenseTest',
     'MatrixDefenseTest',
     'PhysicalResistTest',
     'BiofeedbackResistTest',
@@ -437,60 +523,71 @@ async function updateMovementEffect(combatant) {
     'DrainTest'
   ];
 
-  // Määritetään kolme erillistä efektiä
+  // SR5 0.36+ ActiveEffect schema: conditions carry their own include/exclude mode,
+  // so the sr5-ae-neg-filter module's negation flag is no longer needed.
+  // Each target's changes reference it by id via changes[].target.
   const effectsToCreate = [
     {
       name: `${modeLabel} ${game.i18n.localize("SR5WalkRun.Penalty")}`,
       img: isSprint ? "systems/shadowrun5e/dist/icons/status-effects/sprint.svg" : "systems/shadowrun5e/dist/icons/status-effects/run.svg",
       statuses: [statusTag],
-      changes: [{ key: "data.pool", mode: CONST.ACTIVE_EFFECT_MODES.ADD, value: "-2", priority: 20 }],
-      flags: { 
-        [moduleFlagKey]: { id: "globalPenalty" },
-        'sr5-ae-neg-filter': {
-          negated: {
-            selection_tests: testsToExclude,
-            selection_skills: ['running']
-          }
-        }
-      },
+      flags: { [moduleFlagKey]: { id: "globalPenalty" } },
       system: {
-        applyTo: "test_all",
-        selection_tests: testsToExclude,
-        selection_categories: [],
-        selection_skills: ['running'],
-        selection_attributes: [],
-        selection_limits: []
+        targets: [
+          {
+            id: "penalty",
+            applyTo: "test_all",
+            conditions: [
+              { type: "tests", mode: "exclude", values: testsToExclude },
+              { type: "skills", mode: "exclude", values: ["running"] }
+            ]
+          }
+        ],
+        changes: [
+          { key: "data.pool", type: "add", value: "-2", target: "penalty", priority: 20 }
+        ]
       }
     },
     {
       name: `${modeLabel} ${game.i18n.localize("SR5WalkRun.Defense")}`,
       img: "icons/svg/shield.svg",
       statuses: [statusTag],
-      changes: [{ key: "data.pool", mode: CONST.ACTIVE_EFFECT_MODES.ADD, value: String(defenseValue), priority: 25 }],
       flags: { [moduleFlagKey]: { id: "defenseBonus" } },
       system: {
-        applyTo: "test_all",
-        selection_tests: ['PhysicalDefenseTest', 'CombatSpellDefenseTest'],
-        selection_categories: [],
-        selection_skills: [],
-        selection_attributes: [],
-        selection_limits: []
+        targets: [
+          {
+            id: "defense",
+            applyTo: "test_all",
+            conditions: [
+              { type: "tests", mode: "include", values: ["PhysicalDefenseTest"] }
+            ]
+          }
+        ],
+        changes: [
+          { key: "data.pool", type: "add", value: String(defenseValue), target: "defense", priority: 25 }
+        ]
+      }
+    },
+    {
+      name: `${game.i18n.localize("SR5WalkRun.Charging")}`,
+      img: "systems/shadowrun5e/dist/icons/redist/fist.svg",
+      statuses: [statusTag],
+      flags: { [moduleFlagKey]: { id: "chargingBonus" } },
+      system: {
+        targets: [
+          {
+            id: "charging",
+            applyTo: "test_all",
+            conditions: [
+              { type: "tests", mode: "include", values: ["MeleeAttackTest"] }
+            ]
+          }
+        ],
+        changes: [
+          { key: "data.pool", type: "add", value: "4", target: "charging", priority: 25 }
+        ]
       }
     }
-    
-    /*,
-    {
-      name: `${game.i18n.localize("SR5WalkRun.PenaltyOverride")}`,
-      img: "icons/svg/upgrade.svg",
-      statuses: [statusTag],
-      changes: [{ key: "data.pool", mode: CONST.ACTIVE_EFFECT_MODES.ADD, value: "2", priority: 25 }],
-      flags: { [moduleFlagKey]: { id: "runningComp" } },
-      system: {
-        applyTo: "test_all",
-        changes: [{ key: "data.pool", type: "add", value: 2 }],
-        selection_skills: [{ value: "Running", id: "running" }]
-      }
-    }*/
   ];
 
   //console.log("%c-> YRITETÄÄN LUODA EFEKTIT TIETOKANTAAN:", "color: #00ff00; font-weight: bold;", effectsToCreate);

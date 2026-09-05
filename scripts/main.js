@@ -8,7 +8,8 @@ import { registerMovementHooks } from "./movement.js";
 import { registerLifecycleHooks } from "./lifecycle.js";
 import { registerRulerHooks } from "./ruler.js";
 //import { registerCombatMovementHooks } from "./test-modifiers.js";
-import { registerSettings } from "./settings.js";
+import { registerSettings, SETTING_RUNNING_MODIFIERS } from "./settings.js";
+import { MODULE_ID } from "./utils.js";
 
 Hooks.once("init", () => {
   console.log("sr5-walk-run-modes | Initialised");
@@ -32,6 +33,38 @@ Hooks.once("init", () => {
 
 Hooks.once("ready", () => {
   registerCombatTrackerHooks();
+
+// Ensure only GMs enforce the override
+if (game.user?.isGM) {
+  const SYSTEM = "shadowrun5e";
+  const SYSTEM_SETTING = "TokenAutoRunning";
+  const MODULE = MODULE_ID;
+  const MODULE_SETTING = SETTING_RUNNING_MODIFIERS;
+
+  // Apply immediately on ready if module option enabled
+  (async function enforceNow() {
+    if (game.settings.get(MODULE, MODULE_SETTING) && game.settings.get(SYSTEM, SYSTEM_SETTING) === true) {
+      await game.settings.set(SYSTEM, SYSTEM_SETTING, false);
+    }
+  })();
+
+  // Re-apply when either setting changes:
+  Hooks.on("updateSetting", (namespace, key, value) => {
+    // module toggle turned on → make system false now
+    if (namespace === MODULE && key === MODULE_SETTING && value === true) {
+      if (game.settings.get(SYSTEM, SYSTEM_SETTING) === true) {
+        void game.settings.set(SYSTEM, SYSTEM_SETTING, false);
+      }
+    }
+    // someone tried to enable the system setting → revert it if our module override is active
+    if (namespace === SYSTEM && key === SYSTEM_SETTING && value === true && game.settings.get(MODULE, MODULE_SETTING)) {
+      // small delay avoids UI race conditions
+      setTimeout(() => { void game.settings.set(SYSTEM, SYSTEM_SETTING, false); }, 20);
+    }
+  });
+}
+
+
 });
 
 /**

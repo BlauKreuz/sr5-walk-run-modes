@@ -16,17 +16,17 @@ It is kind of vague whether declaring movement, p.163, means only the route or a
 Current SR5 system considers and flags character running only after they have moved beyond their walking rate. This means that with 2 phases they can first walk and then run, but not the other way. This also complies with p.162 "As soon as.." and p.161 "...before they are considered to be Running". However, if that limits players' option too much, this module offers options.
 
 ## SETTINGS:
-
-!!! "Auto Detect Running Movement" in SR5 settings must be turned off !!!
----------------------------------------------------------------------------
-
 - Movement mode is declared in combat tracker either (A) once for the whole turn or (B) once every phase.
 A is a strict interpretation of p.163 "Movement is declared and taken into consideration during the declare actions phase".
 B offers more flexibility and allows a character to act without running penalty in 1st phase and move up to max walking distance and the run in 2nd phase.
 
 - Clicked running mode can be set to create appropriate active effects automatically, but this requires an additional module (sr5-ae-neg-filter).
+
  -- Penalty -2 (running) to all active tests, other than the running test for sprinting distance increase. Sprinting does not cause additional penalties.
+
  -- Bonus +2 (running) or +4 (sprinting) to physical defense tests.
+
+ This setting also disabled SR5 setting "Auto-Detect Running Mode", since modes are declared by players.
 
 - Selected mode limits the movement automatically to mode's max distance, but it can also be set for GM override. Used and max distances are shown in combat tracker and there is an option to set visibility of those numbers to all/players/owned only.
 

@@ -21,11 +21,10 @@ A is a strict interpretation of p.163 "Movement is declared and taken into consi
 B offers more flexibility and allows a character to act without running penalty in 1st phase and move up to max walking distance and the run in 2nd phase.
 
 - Declared running mode creates appropriate active effects automatically.<br>
-  -- Penalty -2 (running) to all active tests, other than the running test for sprinting distance increase. Sprinting does not cause additional penalties.<br>
+  -- Penalty -2 (running) to all active tests, other than the running skill test. No additional penalties for sprinting.<br>
   -- Bonus +2 (running) or +4 (sprinting) to physical defense tests.<br>
-  -- Bonus +4 to unarmed attack due to charging.
-
- This setting also disabled SR5 setting "Auto-Detect Running Mode", since modes are declared by players.
+  -- Bonus +4 to unarmed attack due to charging.<br>
+ This setting also disables SR5 setting "Auto-Detect Running Mode", since modes are declared by players.
 
 - Selected mode limits the movement automatically to mode's max distance, but it can also be set for GM override. Used and max distances are shown in combat tracker and there is an option to set visibility of those numbers to all/players/owned only.
 

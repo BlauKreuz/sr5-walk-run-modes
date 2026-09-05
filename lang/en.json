@@ -15,7 +15,7 @@
   "SR5WalkRun.RunningModifier": "Running",
   "SR5WalkRun.SprintingModifier": "Sprinting",
   "SR5WalkRun.Settings.RunningModifiers.Name": "Running Modifiers",
-  "SR5WalkRun.Settings.RunningModifiers.Hint": "Apply automatic modifiers to dice pools: −2 to all active tests, +2/+4 to Physical Defense, no effect on resist/soak or the Running skill test. !!! Requires the sr5-ae-neg-filter module.",
+  "SR5WalkRun.Settings.RunningModifiers.Hint": "Apply automatic modifiers to dice pools: −2 to all active tests, +2/+4 to Physical Defense, +4 to charging attacks, no effect on resists/soak or the Running skill test.\n (Overrides SR5 system settings for auto-detecting running movement)",
   "SR5WalkRun.Settings.GmMovementOverride.Name": "GM Movement Override",
   "SR5WalkRun.Settings.GmMovementOverride.Hint": "When enabled, the GM can move tokens beyond their declared walk/run distance limits without being blocked.",
   "SR5WalkRun.Settings.DistanceVisibility.Name": "Distance Visibility",
@@ -27,5 +27,5 @@
   "SR5WalkRun.Settings.OpenRunningTestOnSprint.Hint": "When enabled, activating Sprint in the combat tracker automatically opens the actor's Running skill test dialog.",
   "SR5WalkRun.Penalty": "Penalty", 
   "SR5WalkRun.Defense": "Defense",
-  "SR5WalkRun.PenaltyOverride": "Penalty Override"
+  "SR5WalkRun.Charging": "Charging Bonus"
 }

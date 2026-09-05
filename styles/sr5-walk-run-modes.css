@@ -1,5 +1,42 @@
 /* ── SR5 Walk/Run Mode – Encounter Tracker toggle ───────────────────────────── */
 
+/* Initiative-mode icon colours. These override the SR5 system bundle only for
+   the Combat Tracker icons owned by the initiative-mode UI. */
+:root {
+  --sr5-walk-run-physical-icon-color: #c9b1b1;
+  --sr5-walk-run-astral-icon-color:   #d52cff;
+  --sr5-walk-run-matrix-icon-color:   #41ff54;
+}
+
+.combat-tracker .combatant-init-mode-icon.mode-physical i,
+.combat-tracker .combatant-mode-menu .combatant-mode-option[data-mode="meatspace"] i {
+  color: var(--sr5-walk-run-physical-icon-color) !important;
+}
+
+.sr5.roll-card.initiative-summary-card .initiative-mode-icon.mode-physical i {
+  color: var(--sr5-walk-run-physical-icon-color) !important;
+}
+
+.combat-tracker .combatant-init-mode-icon.mode-astral i,
+.combat-tracker .combatant-mode-menu .combatant-mode-option[data-mode="astral"] i {
+  color: var(--sr5-walk-run-astral-icon-color) !important;
+}
+
+.sr5.roll-card.initiative-summary-card .initiative-mode-icon.mode-astral i {
+  color: var(--sr5-walk-run-astral-icon-color) !important;
+}
+
+.combat-tracker .combatant-init-mode-icon.mode-matrix i,
+.combat-tracker .combatant-mode-menu .combatant-mode-option[data-mode="matrix"] i,
+.combat-tracker .combatant-mode-menu .combatant-mode-option[data-mode="cold_sim"] i,
+.combat-tracker .combatant-mode-menu .combatant-mode-option[data-mode="hot_sim"] i {
+  color: var(--sr5-walk-run-matrix-icon-color) !important;
+}
+
+.sr5.roll-card.initiative-summary-card .initiative-mode-icon.mode-matrix i {
+  color: var(--sr5-walk-run-matrix-icon-color) !important;
+}
+
 /* Outer wrapper: two rows stacked */
 .sr5-movement-toggle {
   display: inline-flex;
